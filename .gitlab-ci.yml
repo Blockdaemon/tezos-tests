@@ -1,0 +1,37 @@
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://localhost:2375
+  DEPLOY_ENV: development
+
+services:
+  - docker:18.09-dind
+
+cache:
+  paths:
+    - $CI_PROJECT_DIR/vendor
+
+stages:
+  - go-build
+  - docker-build
+
+go-build:
+  image: golang:1.13.8
+  stage: go-build
+  script:
+    - make build
+  artifacts:
+    paths:
+      - $CI_PROJECT_NAME
+    expire_in: 1 hr
+
+docker-build:
+  image: docker:18.06-dind
+  stage: docker-build
+  before_script:
+    - apk add make
+    - docker login -u bddeploy -p $DOCKER_LOGIN_PASSWORD
+  dependencies:
+    - go-build
+  script:
+    - make docker-build
+    - make docker-push
