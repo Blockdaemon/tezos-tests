@@ -2,8 +2,8 @@ NAME:=$(CI_PROJECT_NAME)
 VERSION:=$(CI_COMMIT_REF_NAME)
 
 ifeq ($(VERSION),)
-	# Looks like we are not running in the CI so default to current branch
-	VERSION:=$(shell git rev-parse --abbrev-ref HEAD)
+	# Looks like we are not running in the CI so default to current branch or tag
+	VERSION:=$(shell git symbolic-ref -q --short HEAD || git describe --tags --exact-match)
 endif
 
 ifeq ($(NAME),)
