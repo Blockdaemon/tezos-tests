@@ -145,11 +145,7 @@ func currentCheckpoint() error {
 		logMessage = fmt.Sprintf("FAILED: %s %d %s", params, statusCode, data)
 		log.Print(logMessage)
 		return errors.New(logMessage)
-	} else if level == 0 {
-		logMessage = fmt.Sprintf("FAILED: %s %d expected level greater than 0 got %d", params, statusCode, int(level))
-		log.Print(logMessage)
-		return errors.New(logMessage)
-	} else if statusCode == 200 {
+	} else if statusCode == 200 && level >= 0 {
 		logMessage = fmt.Sprintf("PASSED: %s %d", params, statusCode)
 		log.Print(logMessage)
 		return nil
